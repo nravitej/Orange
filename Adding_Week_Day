@@ -1,0 +1,22 @@
+import datetime
+import pytz
+from pytz import timezone
+import pandas as pd
+import numpy as np
+from Orange.data import ContinuousVariable, Domain,DiscreteVariable
+from Orange.preprocess import impute
+
+var1=ContinuousVariable("weekday")
+var2=DiscreteVariable("Feature 5", values=["yes", "no"])
+domain = in_data.domain
+new_domain = Domain(attributes=domain.attributes + (var1,var2), metas=domain.metas, class_vars=domain.class_vars)
+in_data=in_data.transform(new_domain)
+timezone = timezone('US/Pacific')
+for data in in_data:
+    timestamp: str = str(data['timestamp'])
+    date = timezone.localize(datetime.datetime.strptime(timestamp, '%Y-%m-%d %H:%M:%S'))
+    weekday: int = date.weekday()
+    data['weekday']=weekday
+
+
+out_data = in_data
