@@ -1,0 +1,31 @@
+import pytz
+from pytz import timezone 
+from astral.sun import sun
+from astral import LocationInfo
+from astral.geocoder import database,lookup
+from Orange.data import ContinuousVariable, Domain,DiscreteVariable
+from Orange.preprocess import impute
+
+var1=ContinuousVariable("IsDay")
+var2=DiscreteVariable("Feature 5", values=["yes", "no"])
+domain = in_data.domain
+new_domain = Domain(attributes=domain.attributes + (var1,var2), metas=domain.metas, class_vars=domain.class_vars)
+in_data=in_data.transform(new_domain)
+city=lookup("San Francisco",database())
+for data in in_data:
+
+    s = sun(city.observer,date=datetime.date(int(str(data['Year'])),int(str(data['Month'])),int(str(data['Day']))),tzinfo=city.timezone)
+    Sunrise=str(s["sunrise"])[11:13]
+    dusk=str(s["dusk"])[11:13]
+    print(Sunrise)
+    if data['Hour']>Sunrise and data['Hour']<dusk:
+        data['IsDay']=1
+    else:
+        data['IsDay']=0
+
+
+
+
+
+ 
+out_data = in_data
